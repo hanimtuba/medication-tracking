@@ -192,20 +192,43 @@ import 'package:medication_tracking/core/errors/exceptions.dart';
 import 'package:medication_tracking/features/medication/domain/entities/medication.dart';
 ```
 
-### 10. Constants
+### 10. Constants (Static YASAK)
+
+**ÖNEMLİ**: Static kullanılmayacak! Sabitler için const kullanılacak.
 
 ```dart
-// ✅ DOĞRU - Constants için ayrı dosya
+// ❌ YANLIŞ - Static kullanma
+class AppConstants {
+  static const String apiBaseUrl = 'https://api.example.com';
+  static const int maxRetryAttempts = 3;
+}
+
+// ✅ DOĞRU - Const kullan, static yok
 // core/constants/app_constants.dart
 class AppConstants {
+  const AppConstants._(); // Private constructor - instance oluşturulamaz
+  
   static const String apiBaseUrl = 'https://api.example.com';
   static const int maxRetryAttempts = 3;
   static const Duration requestTimeout = Duration(seconds: 30);
 }
 
+// VEYA daha iyi yaklaşım - const değişkenler
+// core/constants/app_constants.dart
+const String apiBaseUrl = 'https://api.example.com';
+const int maxRetryAttempts = 3;
+const Duration requestTimeout = Duration(seconds: 30);
+
 // Kullanım
-final url = '${AppConstants.apiBaseUrl}/medications';
+final url = '$apiBaseUrl/medications';
 ```
+
+**Kurallar**:
+1. **Static method'lar YASAK**
+2. **Static field'lar sadece const değerler için kabul edilebilir** (ama tercih edilmez)
+3. **Sabitler için const değişkenler kullan**
+4. **Utility fonksiyonlar için extension'lar kullan**
+5. **Singleton için factory constructor kullan, static instance yok**
 
 ### 11. Magic Numbers/Strings
 
@@ -374,6 +397,246 @@ class _MedicationListPageState
 }
 ```
 
+### 17. Responsive Tasarım (KRİTİK - ZORUNLU)
+
+**ÖNEMLİ**: TÜM TASARIMLAR RESPONSIVE OLACAK! Bu bir zorunluluktur.
+
+```dart
+// ❌ YANLIŞ - Sabit değerler kullanma
+Container(
+  width: 100,
+  height: 50,
+  padding: EdgeInsets.all(16),
+  child: Text(
+    'Hello',
+    style: TextStyle(fontSize: 16),
+  ),
+)
+
+// ✅ DOĞRU - Responsive değerler kullan
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+Container(
+  width: 100.w,        // Responsive width
+  height: 50.h,         // Responsive height
+  padding: EdgeInsets.all(16.r),  // Responsive padding (radius için de r kullanılır)
+  child: Text(
+    'Hello',
+    style: TextStyle(fontSize: 16.sp),  // Responsive font size
+  ),
+)
+
+// ✅ DOĞRU - Responsive spacing
+SizedBox(width: 20.w, height: 20.h)
+EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h)
+BorderRadius.circular(12.r)
+```
+
+**Kurallar**:
+1. **TÜM BOYUTLAR RESPONSIVE OLMALI**: width, height, padding, margin, font size
+2. **Font Size**: Mutlaka `.sp` kullanılmalı (örn: `16.sp`)
+3. **Width**: `.w` kullanılmalı (örn: `100.w`)
+4. **Height**: `.h` kullanılmalı (örn: `50.h`)
+5. **Radius/Padding**: `.r` kullanılmalı (örn: `16.r`)
+6. **Sabit değerler ASLA kullanılmamalı** (hardcoded numbers)
+7. **Her widget responsive olmalı**
+8. **Farklı ekran boyutları test edilmeli** (phone, tablet)
+
+**Örnek Responsive Widget**:
+```dart
+class ResponsiveCard extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  
+  const ResponsiveCard({
+    Key? key,
+    required this.title,
+    required this.subtitle,
+  }) : super(key: key);
+  
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(16.r),
+      margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12.r),
+        color: colorScheme.surface, // Tema rengi kullan
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 18.sp,
+              fontWeight: FontWeight.bold,
+              color: colorScheme.onSurface, // Tema rengi kullan
+            ),
+          ),
+          SizedBox(height: 8.h),
+          Text(
+            subtitle,
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: colorScheme.onSurface.withOpacity(0.7), // Tema rengi kullan
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+```
+
+### 18. Color ve Tema Kullanımı (KRİTİK - ZORUNLU)
+
+**ÖNEMLİ**: TÜM RENKLER DARK VE LIGHT TEMA UYUMLU OLMALI!
+
+```dart
+// ❌ YANLIŞ - Sabit renkler kullanma
+Container(
+  color: Colors.white,
+  child: Text(
+    'Hello',
+    style: TextStyle(color: Colors.black),
+  ),
+)
+
+// ❌ YANLIŞ - Hardcoded color
+Container(
+  color: Color(0xFFF5F5F5),
+  child: Text('Hello'),
+)
+
+// ✅ DOĞRU - Tema renkleri kullan
+Widget build(BuildContext context) {
+  final theme = Theme.of(context);
+  final colorScheme = theme.colorScheme;
+  
+  return Container(
+    color: colorScheme.surface, // Light'ta beyaz, dark'ta koyu
+    child: Text(
+      'Hello',
+      style: TextStyle(
+        color: colorScheme.onSurface, // Light'ta siyah, dark'ta beyaz
+      ),
+    ),
+  );
+}
+
+// ✅ DOĞRU - Brightness kontrolü
+Widget build(BuildContext context) {
+  final isDark = Theme.of(context).brightness == Brightness.dark;
+  final backgroundColor = isDark ? Colors.grey[900]! : Colors.white;
+  
+  return Container(color: backgroundColor);
+}
+
+// ✅ DOĞRU - Custom renkler için AppColors
+// core/theme/app_colors.dart
+class AppColors {
+  const AppColors._();
+  
+  // Light theme colors
+  static const Color primaryLight = Color(0xFF2196F3);
+  static const Color secondaryLight = Color(0xFF03DAC6);
+  
+  // Dark theme colors
+  static const Color primaryDark = Color(0xFF90CAF9);
+  static const Color secondaryDark = Color(0xFF03DAC6);
+  
+  // Tema'ya göre renk döndür
+  static Color primary(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return isDark ? primaryDark : primaryLight;
+  }
+}
+
+// Kullanım
+Container(
+  color: AppColors.primary(context), // Tema'ya göre otomatik renk
+)
+```
+
+**Kurallar**:
+1. **Sabit renkler ASLA kullanılmamalı** (`Colors.white`, `Colors.black`, `Color(0xFF...)`)
+2. **Tema renkleri kullanılmalı** (`colorScheme.surface`, `colorScheme.onSurface`, vb.)
+3. **Dark mode desteği zorunludur**
+4. **Custom renkler AppColors sınıfında tanımlanmalı**
+5. **Her renk dark ve light tema için test edilmeli**
+
+### 19. Dependency Injection (KRİTİK - ZORUNLU)
+
+**ÖNEMLİ**: TÜM BAĞIMLILIKLAR DI İLE YÖNETİLMELİ!
+
+```dart
+// ❌ YANLIŞ - Direkt instance oluşturma
+class MedicationProvider extends ChangeNotifier {
+  final repository = MedicationRepositoryImpl(); // YANLIŞ!
+  
+  MedicationProvider() {
+    // YANLIŞ!
+  }
+}
+
+// ❌ YANLIŞ - Static kullanma
+class MedicationProvider extends ChangeNotifier {
+  final repository = MedicationRepository.instance; // YANLIŞ!
+}
+
+// ✅ DOĞRU - DI ile inject et
+class MedicationProvider extends ChangeNotifier {
+  final MedicationRepository repository;
+  final GetMedications getMedications;
+  
+  MedicationProvider({
+    required this.repository,
+    required this.getMedications,
+  });
+}
+
+// injection_container.dart
+final getIt = GetIt.instance;
+
+Future<void> init() async {
+  // Repositories
+  getIt.registerLazySingleton<MedicationRepository>(
+    () => MedicationRepositoryImpl(
+      remoteDataSource: getIt(),
+      localDataSource: getIt(),
+    ),
+  );
+  
+  // Use Cases
+  getIt.registerLazySingleton(
+    () => GetMedications(getIt()),
+  );
+  
+  // Providers
+  getIt.registerFactory(
+    () => MedicationProvider(
+      repository: getIt(),
+      getMedications: getIt(),
+    ),
+  );
+}
+
+// Kullanım
+final provider = getIt<MedicationProvider>();
+```
+
+**Kurallar**:
+1. **Hiçbir yerde `new` keyword'ü kullanılmayacak**
+2. **Tüm bağımlılıklar constructor'dan inject edilecek**
+3. **Static instance'lar kullanılmayacak**
+4. **get_it container'ı kullanılacak**
+5. **Test edilebilirlik için DI zorunludur**
+
 ## Code Review Checklist
 
 - [ ] Kod formatlanmış mı?
@@ -390,4 +653,21 @@ class _MedicationListPageState
 - [ ] BasePage'den miras alınmış mı? (tüm page'ler için)
 - [ ] const constructor'lar kullanılmış mı?
 - [ ] Consumer widget'ında child parametresi kullanılmış mı? (rebuild optimizasyonu)
+- [ ] **TÜM TASARIMLAR RESPONSIVE MI?** (KRİTİK - ZORUNLU)
+- [ ] Font size'lar `.sp` ile mi yazılmış?
+- [ ] Width/Height değerleri `.w` ve `.h` ile mi yazılmış?
+- [ ] Padding/Margin/Radius değerleri `.r` ile mi yazılmış?
+- [ ] Sabit değerler (hardcoded numbers) kullanılmamış mı?
+- [ ] **TÜM RENKLER TEMA UYUMLU MU?** (KRİTİK - ZORUNLU)
+- [ ] Sabit renkler (`Colors.white`, `Colors.black`) kullanılmamış mı?
+- [ ] Tema renkleri (`colorScheme.surface`, `colorScheme.onSurface`) kullanılmış mı?
+- [ ] Dark mode desteği var mı?
+- [ ] **STATIC KULLANILMAMIŞ MI?** (KRİTİK - ZORUNLU)
+- [ ] Static method'lar kullanılmamış mı?
+- [ ] Static field'lar sadece const değerler için mi?
+- [ ] Sabitler const değişkenler olarak mı tanımlanmış?
+- [ ] **DI KULLANILMIŞ MI?** (KRİTİK - ZORUNLU)
+- [ ] Tüm bağımlılıklar DI ile inject edilmiş mi?
+- [ ] `new` keyword'ü kullanılmamış mı?
+- [ ] Static instance'lar kullanılmamış mı?
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:medication_tracking/core/theme/app_theme.dart';
 import 'package:medication_tracking/core/constants/app_constants.dart';
 import 'package:medication_tracking/injection_container.dart' as di;
@@ -14,12 +15,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: AppConstants.appName,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
-      home: const HomePage(),
+    return ScreenUtilInit(
+      designSize: const Size(375, 812), // iPhone X design size
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return MaterialApp(
+          title: AppConstants.appName,
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: ThemeMode.system,
+          home: const HomePage(),
+        );
+      },
     );
   }
 }
@@ -33,10 +41,10 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         title: const Text(AppConstants.appName),
       ),
-      body: const Center(
+      body: Center(
         child: Text(
           'Welcome to Medication Tracking',
-          style: TextStyle(fontSize: 24),
+          style: TextStyle(fontSize: 24.sp),
         ),
       ),
     );

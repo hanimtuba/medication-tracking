@@ -41,7 +41,10 @@ Presentation → Domain ← Data
 
 ## Dependency Injection
 
-**get_it** veya **Riverpod** ile dependency injection yapılacak
+**get_it** kullanılacak. **KRİTİK**: Tüm bağımlılıklar DI container üzerinden yönetilecek.
+- Hiçbir yerde `new` keyword'ü ile direkt instance oluşturulmayacak
+- Tüm servisler, repository'ler, use case'ler DI ile inject edilecek
+- Test edilebilirlik için DI zorunludur
 
 ## Veri Saklama
 
@@ -86,4 +89,29 @@ Presentation → Domain ← Data
 - `const` constructor'lar kullanılacak
 - `Consumer` widget'ı ile sadece gerekli kısımlar rebuild edilecek
 - `child` parametresi kullanılarak rebuild'ler minimize edilecek
+
+### Responsive Tasarım
+- **TÜM TASARIMLAR RESPONSIVE OLACAK** - Bu kritik bir gereksinimdir
+- **flutter_screenutil** paketi kullanılacak
+- Tüm boyutlar (width, height, font size, padding, margin) responsive olacak
+- `sp()` fonksiyonu ile font boyutları responsive yapılacak
+- `w()`, `h()`, `r()` fonksiyonları ile boyutlar responsive yapılacak
+- Farklı ekran boyutlarına (phone, tablet, desktop) uyum sağlanacak
+- Orientation değişikliklerine (portrait/landscape) uyum sağlanacak
+- Her widget ve page responsive olarak tasarlanacak
+
+### Color ve Tema Yönetimi
+- **TÜM RENKLER DARK VE LIGHT TEMA UYUMLU OLMALI** - Bu zorunludur
+- Renkler `Theme.of(context).colorScheme` veya `Theme.of(context).brightness` kullanılarak alınacak
+- Sabit renkler (hardcoded colors) kullanılmayacak
+- `Colors.white`, `Colors.black` gibi sabit renkler yerine tema renkleri kullanılacak
+- Dark mode desteği için `ColorScheme` kullanılacak
+- Custom renkler `AppColors` sınıfında tanımlanacak ve tema ile uyumlu olacak
+
+### Static Kullanımı (YASAK)
+- **STATIC KULLANILMAYACAK** - Bu kritik bir kuraldır
+- Static method'lar, static field'lar, static değişkenler kullanılmayacak
+- Sabitler için `const` kullanılacak ve constant sınıflar oluşturulacak
+- Utility fonksiyonlar için extension'lar veya helper sınıflar kullanılacak
+- Singleton pattern gerekirse factory constructor ile yapılacak, static kullanılmayacak
 

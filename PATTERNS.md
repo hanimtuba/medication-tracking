@@ -157,21 +157,31 @@ class MedicationModel extends Medication {
 }
 ```
 
-### 6. Singleton Pattern
+### 6. Singleton Pattern (Static YASAK - DI Kullan)
 
 **Amaç**: Tek bir instance gereken servisler için (NetworkInfo, Database, vb.)
 
-**Kullanım**:
+**ÖNEMLİ**: Static kullanılmayacak! DI ile singleton yapılacak.
+
 ```dart
+// ❌ YANLIŞ - Static kullanma
 class NetworkInfo {
   static final NetworkInfo _instance = NetworkInfo._internal();
   factory NetworkInfo() => _instance;
   NetworkInfo._internal();
+}
+
+// ✅ DOĞRU - DI ile singleton
+class NetworkInfo {
+  NetworkInfo();
   
   Future<bool> get isConnected async {
     // Implementation
   }
 }
+
+// injection_container.dart
+getIt.registerLazySingleton(() => NetworkInfo());
 ```
 
 ### 7. Observer Pattern (Provider ile)
@@ -540,6 +550,263 @@ class MedicationListView extends StatelessWidget {
   }
 }
 ```
+
+### 12. Responsive Design Pattern
+
+**Amaç**: Tüm tasarımların farklı ekran boyutlarına uyum sağlaması
+
+**KRİTİK**: TÜM TASARIMLAR RESPONSIVE OLACAK - Bu zorunludur!
+
+**Kullanım**:
+```dart
+// main.dart - ScreenUtil initialization
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await di.init();
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ScreenUtilInit(
+      designSize: const Size(375, 812), // Design size (iPhone X)
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return MaterialApp(
+          title: AppConstants.appName,
+          theme: AppTheme.lightTheme,
+          home: const HomePage(),
+        );
+      },
+    );
+  }
+}
+
+// Responsive Widget Örneği - Tema Uyumlu
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+class ResponsiveCard extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  
+  const ResponsiveCard({
+    Key? key,
+    required this.title,
+    required this.subtitle,
+  }) : super(key: key);
+  
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(16.r),  // Responsive padding
+      margin: EdgeInsets.symmetric(
+        horizontal: 16.w,  // Responsive horizontal margin
+        vertical: 8.h,    // Responsive vertical margin
+      ),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12.r),  // Responsive radius
+        color: colorScheme.surface,  // Tema rengi kullan
+        boxShadow: [
+          BoxShadow(
+            blurRadius: 8.r,
+            offset: Offset(0, 2.h),
+            color: colorScheme.shadow.withOpacity(0.1),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 18.sp,  // Responsive font size
+              fontWeight: FontWeight.bold,
+              color: colorScheme.onSurface,  // Tema rengi kullan
+            ),
+          ),
+          SizedBox(height: 8.h),  // Responsive spacing
+          Text(
+            subtitle,
+            style: TextStyle(
+              fontSize: 14.sp,  // Responsive font size
+              color: colorScheme.onSurface.withOpacity(0.7),  // Tema rengi kullan
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+```
+
+**Kurallar**:
+1. **Font Size**: Her zaman `.sp` kullan (örn: `16.sp`)
+2. **Width**: `.w` kullan (örn: `100.w`)
+3. **Height**: `.h` kullan (örn: `50.h`)
+4. **Radius/Padding**: `.r` kullan (örn: `16.r`)
+5. **Sabit değerler ASLA kullanma** (hardcoded numbers yasak)
+6. **Tüm widget'lar responsive olmalı**
+7. **Farklı ekran boyutları test edilmeli**
+
+### 13. Color ve Tema Pattern
+
+**Amaç**: Dark ve Light tema uyumlu renk kullanımı
+
+**KRİTİK**: TÜM RENKLER TEMA UYUMLU OLMALI - Bu zorunludur!
+
+**Kullanım**:
+```dart
+// ❌ YANLIŞ - Sabit renkler
+Container(
+  color: Colors.white,
+  child: Text('Hello', style: TextStyle(color: Colors.black)),
+)
+
+// ✅ DOĞRU - Tema renkleri
+Widget build(BuildContext context) {
+  final theme = Theme.of(context);
+  final colorScheme = theme.colorScheme;
+  
+  return Container(
+    color: colorScheme.surface, // Light'ta beyaz, dark'ta koyu
+    child: Text(
+      'Hello',
+      style: TextStyle(color: colorScheme.onSurface), // Light'ta siyah, dark'ta beyaz
+    ),
+  );
+}
+
+// ✅ DOĞRU - Custom renkler için AppColors
+// core/theme/app_colors.dart
+class AppColors {
+  const AppColors._();
+  
+  // Light theme
+  static const Color primaryLight = Color(0xFF2196F3);
+  static const Color errorLight = Color(0xFFB00020);
+  
+  // Dark theme
+  static const Color primaryDark = Color(0xFF90CAF9);
+  static const Color errorDark = Color(0xFFCF6679);
+  
+  // Tema'ya göre renk döndür
+  static Color primary(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return isDark ? primaryDark : primaryLight;
+  }
+  
+  static Color error(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return isDark ? errorDark : errorLight;
+  }
+}
+
+// Kullanım
+Container(
+  color: AppColors.primary(context), // Tema'ya göre otomatik
+)
+```
+
+**Kurallar**:
+1. **Sabit renkler ASLA kullanılmamalı** (`Colors.white`, `Colors.black`, `Color(0xFF...)`)
+2. **Tema renkleri kullanılmalı** (`colorScheme.surface`, `colorScheme.onSurface`, vb.)
+3. **Dark mode desteği zorunludur**
+4. **Custom renkler AppColors sınıfında tanımlanmalı**
+5. **Her renk dark ve light tema için test edilmeli**
+
+### 14. Dependency Injection Pattern (KRİTİK)
+
+**Amaç**: Tüm bağımlılıkların DI ile yönetilmesi
+
+**KRİTİK**: TÜM BAĞIMLILIKLAR DI İLE YÖNETİLMELİ - Bu zorunludur!
+
+**Kullanım**:
+```dart
+// ❌ YANLIŞ - Direkt instance
+class MedicationProvider extends ChangeNotifier {
+  final repository = MedicationRepositoryImpl(); // YANLIŞ!
+}
+
+// ❌ YANLIŞ - Static
+class MedicationProvider extends ChangeNotifier {
+  final repository = MedicationRepository.instance; // YANLIŞ!
+}
+
+// ✅ DOĞRU - DI ile inject
+class MedicationProvider extends ChangeNotifier {
+  final MedicationRepository repository;
+  final GetMedications getMedications;
+  
+  MedicationProvider({
+    required this.repository,
+    required this.getMedications,
+  });
+}
+
+// injection_container.dart
+final getIt = GetIt.instance;
+
+Future<void> init() async {
+  // Data Sources
+  getIt.registerLazySingleton<MedicationRemoteDataSource>(
+    () => MedicationRemoteDataSourceImpl(client: getIt()),
+  );
+  
+  getIt.registerLazySingleton<MedicationLocalDataSource>(
+    () => MedicationLocalDataSourceImpl(storage: getIt()),
+  );
+  
+  // Repositories
+  getIt.registerLazySingleton<MedicationRepository>(
+    () => MedicationRepositoryImpl(
+      remoteDataSource: getIt(),
+      localDataSource: getIt(),
+      networkInfo: getIt(),
+    ),
+  );
+  
+  // Use Cases
+  getIt.registerLazySingleton(
+    () => GetMedications(getIt()),
+  );
+  
+  getIt.registerLazySingleton(
+    () => AddMedication(getIt()),
+  );
+  
+  // Providers (Factory - her seferinde yeni instance)
+  getIt.registerFactory(
+    () => MedicationProvider(
+      repository: getIt(),
+      getMedications: getIt(),
+      addMedication: getIt(),
+    ),
+  );
+}
+
+// Kullanım
+final provider = getIt<MedicationProvider>();
+```
+
+**Kurallar**:
+1. **Hiçbir yerde `new` keyword'ü kullanılmayacak**
+2. **Tüm bağımlılıklar constructor'dan inject edilecek**
+3. **Static instance'lar kullanılmayacak**
+4. **get_it container'ı kullanılacak**
+5. **Test edilebilirlik için DI zorunludur**
+6. **Singleton'lar için `registerLazySingleton` kullanılacak**
+7. **Factory'ler için `registerFactory` kullanılacak**
 
 ## Feature Modül Yapısı
 

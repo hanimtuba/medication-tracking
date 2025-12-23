@@ -109,13 +109,13 @@ features/
 
 Core klasörü tüm özellikler tarafından kullanılan ortak yapıları içerir:
 
-- **constants/**: Uygulama genelinde kullanılan sabitler
+- **constants/**: Uygulama genelinde kullanılan sabitler (const değişkenler, static YASAK)
 - **errors/**: Hata sınıfları ve exception'lar
 - **network/**: API client, interceptors, network info
-- **theme/**: Renkler, text stilleri, tema yapılandırması
-- **utils/**: Yardımcı fonksiyonlar (validators, formatters, vb.)
+- **theme/**: Renkler (AppColors - dark/light tema uyumlu), text stilleri, tema yapılandırması
+- **utils/**: Yardımcı fonksiyonlar (validators, formatters, vb.) - static YASAK, extension kullan
 - **extensions/**: Dart extension'ları
-- **widgets/**: Ortak kullanılan widget'lar (buttons, cards, inputs, vb.)
+- **widgets/**: Ortak kullanılan widget'lar (buttons, cards, inputs, vb.) - responsive ve tema uyumlu
 - **pages/**: Base page sınıfı ve ortak page yapıları
 - **logger/**: Logger yapılandırması ve helper'lar
 

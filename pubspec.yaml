@@ -52,6 +52,9 @@ dependencies:
   
   # Local Storage
   shared_preferences: ^2.2.2
+  
+  # Responsive Design
+  flutter_screenutil: ^5.9.0
 
 dev_dependencies:
   flutter_test:
