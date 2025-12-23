@@ -1,5 +1,10 @@
 # Design Patterns ve Best Practices
 
+**ÖNEMLİ**: TÜM KOD İNGİLİZCE YAZILACAK! (UI string'leri hariç)
+- Değişken isimleri, fonksiyon isimleri, sınıf isimleri, dosya isimleri İngilizce olacak
+- Kod içindeki yorumlar İngilizce olacak
+- Türkçe karakterler kullanılmayacak
+
 ## Kullanılacak Design Pattern'ler
 
 ### 1. Repository Pattern

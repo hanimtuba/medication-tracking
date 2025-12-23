@@ -100,10 +100,15 @@ features/
 
 ## İsimlendirme Kuralları
 
-- **Dosya İsimleri**: snake_case (örn: `medication_repository.dart`)
-- **Sınıf İsimleri**: PascalCase (örn: `MedicationRepository`)
-- **Değişken İsimleri**: camelCase (örn: `medicationList`)
-- **Sabitler**: lowerCamelCase veya SCREAMING_SNAKE_CASE (örn: `apiBaseUrl` veya `API_BASE_URL`)
+**ÖNEMLİ**: TÜM KOD İNGİLİZCE YAZILACAK! (UI string'leri hariç)
+
+- **Dosya İsimleri**: snake_case, İngilizce (örn: `medication_repository.dart`)
+- **Sınıf İsimleri**: PascalCase, İngilizce (örn: `MedicationRepository`)
+- **Değişken İsimleri**: camelCase, İngilizce (örn: `medicationList`)
+- **Fonksiyon İsimleri**: camelCase, İngilizce (örn: `getMedications()`)
+- **Sabitler**: lowerCamelCase veya SCREAMING_SNAKE_CASE, İngilizce (örn: `apiBaseUrl` veya `API_BASE_URL`)
+- **Yorumlar**: İngilizce (kod içindeki tüm yorumlar)
+- **Türkçe Karakterler**: Kullanılmayacak (ı, ş, ğ, ü, ö, ç yerine i, s, g, u, o, c)
 
 ## Core Klasörü
 

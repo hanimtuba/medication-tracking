@@ -64,6 +64,7 @@ Presentation → Domain ← Data
 3. **KISS**: Basit ve anlaşılır kod yazılacak
 4. **Separation of Concerns**: Her sınıf tek bir sorumluluğa sahip olacak
 5. **Dependency Inversion**: Soyutlamalara bağımlılık, somut implementasyonlara değil
+6. **English Code**: Tüm kod İngilizce yazılacak (değişken isimleri, fonksiyon isimleri, sınıf isimleri, dosya isimleri, yorumlar)
 
 ## Özel Gereksinimler
 
@@ -114,4 +115,13 @@ Presentation → Domain ← Data
 - Sabitler için `const` kullanılacak ve constant sınıflar oluşturulacak
 - Utility fonksiyonlar için extension'lar veya helper sınıflar kullanılacak
 - Singleton pattern gerekirse factory constructor ile yapılacak, static kullanılmayacak
+
+### English Code (ZORUNLU)
+- **TÜM KOD İNGİLİZCE YAZILACAK** - Bu zorunludur
+- Değişken isimleri İngilizce olacak
+- Fonksiyon isimleri İngilizce olacak
+- Sınıf isimleri İngilizce olacak
+- Dosya isimleri İngilizce olacak
+- Kod içindeki yorumlar İngilizce olacak
+- UI string'leri hariç (kullanıcıya gösterilen metinler Türkçe olabilir)
 

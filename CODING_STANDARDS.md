@@ -9,40 +9,69 @@
 
 ### 2. İsimlendirme
 
+**ÖNEMLİ**: TÜM KOD İNGİLİZCE YAZILACAK! (UI string'leri hariç)
+
 #### Dosyalar
 ```dart
-// ✅ DOĞRU
+// ✅ DOĞRU - İngilizce, snake_case
 medication_repository.dart
 medication_list_page.dart
 medication_provider.dart
 
-// ❌ YANLIŞ
+// ❌ YANLIŞ - Türkçe veya yanlış format
+ilac_repository.dart
 MedicationRepository.dart
 medication-list-page.dart
 ```
 
 #### Sınıflar
 ```dart
-// ✅ DOĞRU
+// ✅ DOĞRU - İngilizce, PascalCase
 class MedicationRepository {}
 class MedicationListPage extends StatelessWidget {}
 class MedicationProvider extends ChangeNotifier {}
 
-// ❌ YANLIŞ
+// ❌ YANLIŞ - Türkçe veya yanlış format
+class IlacRepository {}
 class medicationRepository {}
 class medication_list_page {}
 ```
 
 #### Değişkenler ve Fonksiyonlar
 ```dart
-// ✅ DOĞRU
+// ✅ DOĞRU - İngilizce, camelCase
 final medicationList = <Medication>[];
 void getMedications() {}
 const apiBaseUrl = 'https://api.example.com';
+String userName = 'John';
 
-// ❌ YANLIŞ
+// ❌ YANLIŞ - Türkçe veya yanlış format
+final ilacListesi = <Medication>[];
+void ilaclariGetir() {}
+final kullaniciAdi = 'John';
 final MedicationList = <Medication>[];
 void get_medications() {}
+```
+
+#### Yorumlar
+```dart
+// ✅ DOĞRU - İngilizce yorumlar
+/// Fetches all medications from the repository.
+/// Returns a list of [Medication] entities.
+Future<List<Medication>> getMedications() async {
+  // Load medications from cache first
+  final cachedMedications = await _localDataSource.getMedications();
+  return cachedMedications;
+}
+
+// ❌ YANLIŞ - Türkçe yorumlar
+/// Tüm ilaçları repository'den getirir.
+/// [Medication] entity listesi döner.
+Future<List<Medication>> getMedications() async {
+  // Önce cache'den ilaçları yükle
+  final cachedMedications = await _localDataSource.getMedications();
+  return cachedMedications;
+}
 ```
 
 ### 3. Sınıf Yapısı
@@ -670,4 +699,11 @@ final provider = getIt<MedicationProvider>();
 - [ ] Tüm bağımlılıklar DI ile inject edilmiş mi?
 - [ ] `new` keyword'ü kullanılmamış mı?
 - [ ] Static instance'lar kullanılmamış mı?
+- [ ] **TÜM KOD İNGİLİZCE Mİ?** (KRİTİK - ZORUNLU)
+- [ ] Değişken isimleri İngilizce mi?
+- [ ] Fonksiyon isimleri İngilizce mi?
+- [ ] Sınıf isimleri İngilizce mi?
+- [ ] Dosya isimleri İngilizce mi?
+- [ ] Kod içindeki yorumlar İngilizce mi?
+- [ ] Türkçe karakter veya Türkçe kelime kullanılmamış mı?
 
